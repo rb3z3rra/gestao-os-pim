@@ -33,7 +33,7 @@
       class="bg-slate-800/60 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500">
       <option value="">Todas prioridades</option>
       @for (p of prioridades; track p) {
-        <option [value]="p">{{ p }}</option>
+        <option [value]="p">{{ prioridadeLabel(p) }}</option>
       }
     </select>
     @if (perfil() === 'SUPERVISOR') {
@@ -45,14 +45,13 @@
         }
       </select>
     }
-    <input
-      [ngModel]="filtroSetor()"
-      (ngModelChange)="filtroSetor.set($event)"
-      (keyup.enter)="onFilterChange()"
-      type="text"
-      placeholder="Filtrar por setor"
-      class="bg-slate-800/60 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
-    />
+    <select [ngModel]="filtroSetor()" (ngModelChange)="filtroSetor.set($event); onFilterChange()"
+      class="bg-slate-800/60 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500">
+      <option value="">Todos setores</option>
+      @for (setor of setores(); track setor) {
+        <option [value]="setor">{{ setor }}</option>
+      }
+    </select>
     <button
       type="button"
       (click)="onFilterChange()"

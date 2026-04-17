@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { CreateUsuarioDto, UpdateUsuarioDto, Usuario } from '../models/usuario.model';
+import { CreateUsuarioDto, UpdateUsuarioDto, Usuario, UsuarioDetails } from '../models/usuario.model';
 
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
@@ -15,6 +15,10 @@ export class UsuarioService {
 
   getById(id: string): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.base}/${id}`);
+  }
+
+  getDetails(id: string): Observable<UsuarioDetails> {
+    return this.http.get<UsuarioDetails>(`${this.base}/${id}/detalhes`);
   }
 
   create(dto: CreateUsuarioDto): Observable<Usuario> {

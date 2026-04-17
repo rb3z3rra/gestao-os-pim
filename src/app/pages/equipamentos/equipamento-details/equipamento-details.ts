@@ -4,10 +4,11 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { EquipamentoService } from '../../../core/services/equipamento.service';
 import { Equipamento } from '../../../core/models/equipamento.model';
 import { StatusLabelPipe } from '../../../shared/status-label.pipe';
+import { BackButton } from '../../../shared/back-button/back-button';
 
 @Component({
   selector: 'app-equipamento-details',
-  imports: [CommonModule, RouterLink, StatusLabelPipe],
+  imports: [CommonModule, RouterLink, StatusLabelPipe, BackButton],
   templateUrl: './equipamento-details.html',
 })
 export class EquipamentoDetails implements OnInit {

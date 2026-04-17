@@ -10,6 +10,7 @@ import { EquipamentoForm } from './pages/equipamentos/equipamento-form/equipamen
 import { EquipamentoDetails } from './pages/equipamentos/equipamento-details/equipamento-details';
 import { UsuariosList } from './pages/usuarios/usuarios-list/usuarios-list';
 import { UsuarioForm } from './pages/usuarios/usuario-form/usuario-form';
+import { UsuarioDetailsPage } from './pages/usuarios/usuario-details/usuario-details';
 import { Historico } from './pages/historico/historico';
 import { Relatorios } from './pages/relatorios/relatorios';
 import { Forbidden } from './pages/errors/forbidden/forbidden';
@@ -73,6 +74,11 @@ export const routes: Routes = [
       {
         path: 'usuarios/novo',
         component: UsuarioForm,
+        canActivate: [roleGuard(Perfil.SUPERVISOR)],
+      },
+      {
+        path: 'usuarios/:id/detalhes',
+        component: UsuarioDetailsPage,
         canActivate: [roleGuard(Perfil.SUPERVISOR)],
       },
       {

@@ -2,15 +2,23 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { CreateEquipamentoDto, Equipamento, UpdateEquipamentoDto } from '../models/equipamento.model';
+import { CreateEquipamentoDto, Equipamento, EquipamentoListFilters, UpdateEquipamentoDto } from '../models/equipamento.model';
 
 @Injectable({ providedIn: 'root' })
 export class EquipamentoService {
   private http = inject(HttpClient);
   private base = `${environment.apiUrl}/equipamentos`;
 
-  list(): Observable<Equipamento[]> {
-    return this.http.get<Equipamento[]>(this.base);
+  list(filters: EquipamentoListFilters = {}): Observable<Equipamento[]> {
+    const params = new URLSearchParams();
+
+    if (filters.busca?.trim()) params.set('busca', filters.busca.trim());
+    if (filters.setor?.trim()) params.set('setor', filters.setor.trim());
+    if (typeof filters.ativo === 'boolean') params.set('ativo', String(filters.ativo));
+    if (typeof filters.comOsAbertas === 'boolean') params.set('comOsAbertas', String(filters.comOsAbertas));
+
+    const query = params.toString();
+    return this.http.get<Equipamento[]>(query ? `${this.base}?${query}` : this.base);
   }
 
   getById(id: number): Observable<Equipamento> {

@@ -1,8 +1,6 @@
 <section class="p-8 pt-24 max-w-6xl">
   <header class="flex items-center gap-4 mb-8">
-    <a [routerLink]="['/equipamentos']" class="text-slate-400 hover:text-slate-200">
-      <span class="material-symbols-outlined">arrow_back</span>
-    </a>
+    <app-back-button fallback="/equipamentos" />
     <div>
       <h1 class="text-3xl font-bold font-headline text-slate-100">Detalhe do Equipamento</h1>
       <p class="text-sm text-slate-400 mt-1">Dados completos do ativo e ordens relacionadas.</p>

@@ -1,7 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { OrdemServicoService } from '../../../core/services/ordem-servico.service';
 import { HistoricoOsService } from '../../../core/services/historico-os.service';
 import { ApontamentoOs, OrdemServico, StatusOs } from '../../../core/models/ordem-servico.model';
@@ -17,10 +17,11 @@ import { OsWorkflowActions } from './components/os-workflow-actions';
 import { OsDetailsFacade } from './os-details.facade';
 import { switchAll } from 'rxjs';
 import { StatusLabelPipe } from '../../../shared/status-label.pipe';
+import { BackButton } from '../../../shared/back-button/back-button';
 
 @Component({
   selector: 'app-os-details',
-  imports: [CommonModule, FormsModule, RouterLink, OsSummaryCard, OsWorklogsCard, OsHistoryCard, OsWorkflowActions, StatusLabelPipe],
+  imports: [CommonModule, FormsModule, OsSummaryCard, OsWorklogsCard, OsHistoryCard, OsWorkflowActions, StatusLabelPipe, BackButton],
   templateUrl: './os-details.html',
 })
 export class OsDetails implements OnInit {
@@ -63,6 +64,11 @@ export class OsDetails implements OnInit {
   canAtribuirTecnico = computed(() => {
     const o = this.os();
     return this.isSupervisor() && !!o && o.status !== StatusOs.CONCLUIDA && o.status !== StatusOs.CANCELADA;
+  });
+
+  atribuirBloqueado = computed(() => {
+    const o = this.os();
+    return this.isSupervisor() && !!o?.apontamento_aberto;
   });
 
   canAssumir = computed(() => {

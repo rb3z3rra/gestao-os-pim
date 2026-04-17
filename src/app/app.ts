@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ToastOutlet } from './shared/toast/toast-outlet';
+import { NavigationHistoryService } from './core/navigation/navigation-history.service';
 
 @Component({
   selector: 'app-root',
@@ -9,5 +10,6 @@ import { ToastOutlet } from './shared/toast/toast-outlet';
   styleUrl: './app.css'
 })
 export class App {
+  private _navigationHistory = inject(NavigationHistoryService);
   protected readonly title = signal('servPim');
 }

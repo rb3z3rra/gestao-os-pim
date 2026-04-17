@@ -77,8 +77,7 @@
 
     <div class="min-w-0">
       <p class="text-[10px] uppercase tracking-[0.28em] text-slate-500">{{ saudacao() }}</p>
-      <h1 class="truncate text-base font-semibold text-slate-100">Central de manutenção industrial</h1>
-      <p class="hidden text-xs text-slate-400 md:block">Acompanhe a operação, os tempos e o fluxo das ordens de serviço.</p>
+      <h1 class="truncate text-base font-semibold text-slate-100">{{ user()?.nome || 'Usuário' }}</h1>
     </div>
   </div>
 

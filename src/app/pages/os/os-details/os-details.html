@@ -1,8 +1,6 @@
 <section class="p-8 pt-24 max-w-6xl">
   <header class="flex items-center gap-4 mb-8">
-    <a [routerLink]="['/ordens-de-servico']" class="text-slate-400 hover:text-slate-200">
-      <span class="material-symbols-outlined">arrow_back</span>
-    </a>
+    <app-back-button fallback="/ordens-de-servico" />
     @if (os(); as o) {
       <div class="flex-1">
         <div class="flex items-center gap-3">
@@ -34,6 +32,7 @@
         <app-os-workflow-actions
           [canAssumir]="canAssumir()"
           [canAtribuirTecnico]="canAtribuirTecnico()"
+          [atribuirBloqueado]="atribuirBloqueado()"
           [canIniciar]="canIniciar()"
           [canAtualizarStatus]="canAtualizarStatus()"
           [canIniciarTrabalho]="canIniciarTrabalho()"

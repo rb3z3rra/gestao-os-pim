@@ -13,6 +13,7 @@ import { StatusLabelPipe } from '../../../../shared/status-label.pipe';
 export class OsWorkflowActions {
   canAssumir = input(false);
   canAtribuirTecnico = input(false);
+  atribuirBloqueado = input(false);
   canIniciar = input(false);
   canAtualizarStatus = input(false);
   canIniciarTrabalho = input(false);

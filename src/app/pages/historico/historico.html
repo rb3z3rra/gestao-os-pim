@@ -4,42 +4,131 @@
     <p class="text-sm text-slate-400 mt-1">Auditoria de mudanças de status nas O.S.</p>
   </header>
 
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-3 mb-6">
+    <article class="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
+      <p class="text-xs uppercase tracking-widest text-slate-500">Eventos listados</p>
+      <p class="mt-2 text-3xl font-bold text-slate-100">{{ total() }}</p>
+    </article>
+    <article class="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
+      <p class="text-xs uppercase tracking-widest text-slate-500">Eventos hoje</p>
+      <p class="mt-2 text-3xl font-bold text-blue-400">{{ hoje() }}</p>
+    </article>
+    <article class="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
+      <p class="text-xs uppercase tracking-widest text-slate-500">Com observação</p>
+      <p class="mt-2 text-3xl font-bold text-violet-300">{{ comObservacao() }}</p>
+    </article>
+  </div>
+
+  <div class="mb-6 grid grid-cols-1 gap-3 rounded-2xl border border-slate-800 bg-slate-900/50 p-4 xl:grid-cols-[2fr_1fr_1fr_1fr_1fr_auto]">
+    <input
+      [ngModel]="busca()"
+      (ngModelChange)="busca.set($event)"
+      (keyup.enter)="load()"
+      type="text"
+      placeholder="Buscar por O.S., usuário ou observação"
+      class="rounded-xl border border-slate-700 bg-slate-950/40 px-4 py-2.5 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    <select
+      [ngModel]="statusNovo()"
+      (ngModelChange)="statusNovo.set($event)"
+      class="rounded-xl border border-slate-700 bg-slate-950/40 px-4 py-2.5 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option value="">Todos status</option>
+      @for (status of statusOptions; track status) {
+        <option [value]="status">{{ status | statusLabel }}</option>
+      }
+    </select>
+    <select
+      [ngModel]="prioridade()"
+      (ngModelChange)="prioridade.set($event)"
+      class="rounded-xl border border-slate-700 bg-slate-950/40 px-4 py-2.5 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option value="">Todas prioridades</option>
+      @for (item of prioridadeOptions; track item) {
+        <option [value]="item">{{ item }}</option>
+      }
+    </select>
+    <input
+      [ngModel]="dataInicio()"
+      (ngModelChange)="dataInicio.set($event)"
+      type="date"
+      class="date-input-light rounded-xl border border-slate-700 bg-slate-950/40 px-4 py-2.5 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    <input
+      [ngModel]="dataFim()"
+      (ngModelChange)="dataFim.set($event)"
+      type="date"
+      class="date-input-light rounded-xl border border-slate-700 bg-slate-950/40 px-4 py-2.5 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    <div class="flex gap-2">
+      <button type="button" (click)="load()" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-500">Buscar</button>
+      <button type="button" (click)="clearFilters()" class="rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-300 hover:bg-slate-800">Limpar</button>
+    </div>
+  </div>
+
   @if (loading()) {
     <div class="text-slate-400 py-12 text-center">Carregando...</div>
   } @else if (error()) {
     <div class="bg-red-900/20 border border-red-900 text-red-300 p-4 rounded-lg">{{ error() }}</div>
   } @else {
-    <div class="bg-slate-900/40 border border-slate-800 rounded-xl overflow-hidden">
-      <table class="w-full text-left">
-        <thead class="bg-slate-900/60">
-          <tr class="text-xs text-slate-400 uppercase tracking-widest">
-            <th class="px-6 py-4">Data/Hora</th>
-            <th class="px-6 py-4">O.S.</th>
-            <th class="px-6 py-4">Usuário</th>
-            <th class="px-6 py-4">Status Anterior</th>
-            <th class="px-6 py-4">Status Novo</th>
-            <th class="px-6 py-4">Observação</th>
-          </tr>
-        </thead>
-        <tbody class="text-sm text-slate-200">
-          @for (h of itens(); track h.id) {
-            <tr class="border-t border-slate-800 hover:bg-slate-800/30">
-              <td class="px-6 py-4 text-slate-400 font-mono text-xs">{{ h.registradoEm | date:'dd/MM/yyyy HH:mm' }}</td>
-              <td class="px-6 py-4 font-mono text-blue-400">{{ h.ordemServico?.numero || h.osId }}</td>
-              <td class="px-6 py-4 text-slate-300">{{ h.usuario?.nome || '—' }}</td>
-              <td class="px-6 py-4 text-slate-500">{{ h.statusAnterior | statusLabel }}</td>
-              <td class="px-6 py-4">
-                <span class="text-[10px] px-2 py-1 rounded bg-slate-800 text-slate-200 font-bold uppercase tracking-wider">{{ h.statusNovo | statusLabel }}</span>
-              </td>
-              <td class="px-6 py-4 text-slate-400 text-xs">{{ h.observacao || '—' }}</td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="6" class="px-6 py-12 text-center text-slate-500">Nenhum registro de histórico.</td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+      <div class="mb-4 flex items-center justify-between gap-3 border-b border-slate-800 pb-4">
+        <div>
+          <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">Linha do tempo</h2>
+          <p class="mt-1 text-sm text-slate-500">Os eventos ficam em uma área com rolagem própria para não alongar a página inteira.</p>
+        </div>
+        <span class="rounded-full border border-slate-700 bg-slate-950/40 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-300">
+          {{ total() }} eventos
+        </span>
+      </div>
+
+      <div class="history-scroll max-h-[70vh] space-y-5 overflow-y-auto rounded-2xl border border-slate-800/80 bg-slate-950/20 p-3 pr-2 shadow-[inset_0_1px_0_rgba(148,163,184,0.05)]">
+        @for (h of itens(); track h.id) {
+          <article class="relative rounded-2xl border border-slate-800 bg-slate-950/40 p-5 pl-8">
+            <span class="absolute left-4 top-6 h-3 w-3 rounded-full bg-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.7)]"></span>
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-3">
+                  @if (h.ordemServico?.id) {
+                    <p class="font-mono text-sm font-semibold text-blue-400">{{ h.ordemServico?.numero || h.osId }}</p>
+                    <a
+                      [routerLink]="['/ordens-de-servico', h.ordemServico?.id]"
+                      class="inline-flex items-center rounded-lg p-1 text-slate-400 transition-colors hover:text-blue-400"
+                      aria-label="Visualizar ordem de serviço"
+                      title="Visualizar ordem de serviço"
+                    >
+                      <span class="material-symbols-outlined text-base">visibility</span>
+                    </a>
+                  } @else {
+                    <p class="font-mono text-sm font-semibold text-blue-400">{{ h.ordemServico?.numero || h.osId }}</p>
+                  }
+                  @if (h.ordemServico?.prioridade) {
+                    <span class="rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-wider" [class]="prioridadeClass(h.ordemServico?.prioridade)">
+                      {{ h.ordemServico?.prioridade }}
+                    </span>
+                  }
+                  <span class="rounded-full bg-slate-800 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-200">
+                    {{ h.statusNovo | statusLabel }}
+                  </span>
+                </div>
+                <div class="mt-3 flex flex-wrap items-center gap-2 text-sm">
+                  <span class="text-slate-500">{{ h.statusAnterior | statusLabel }}</span>
+                  <span class="text-slate-600">→</span>
+                  <span class="font-semibold text-blue-300">{{ h.statusNovo | statusLabel }}</span>
+                </div>
+                <p class="mt-3 text-sm text-slate-300">{{ h.observacao || 'Sem observação registrada.' }}</p>
+              </div>
+              <div class="shrink-0 text-right">
+                <p class="text-xs uppercase tracking-widest text-slate-500">Responsável</p>
+                <p class="mt-1 text-sm font-semibold text-slate-100">{{ h.usuario?.nome || '—' }}</p>
+                <p class="mt-2 font-mono text-xs text-slate-500">{{ h.registradoEm | date:'dd/MM/yyyy HH:mm' }}</p>
+              </div>
+            </div>
+          </article>
+        } @empty {
+          <div class="py-12 text-center text-slate-500">Nenhum registro de histórico.</div>
+        }
+      </div>
     </div>
   }
 </section>

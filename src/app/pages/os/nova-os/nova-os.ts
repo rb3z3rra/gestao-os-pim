@@ -11,11 +11,12 @@ import {
   TipoManutencao,
 } from '../../../core/models/ordem-servico.model';
 import { ToastService } from '../../../shared/toast/toast.service';
+import { BackButton } from '../../../shared/back-button/back-button';
 
 
 @Component({
   selector: 'app-nova-os',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, BackButton],
   templateUrl: './nova-os.html',
 })
 export class NovaOs implements OnInit {
