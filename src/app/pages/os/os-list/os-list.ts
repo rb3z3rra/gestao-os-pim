@@ -42,20 +42,16 @@ export class OsList implements OnInit {
     return p === Perfil.SOLICITANTE || p === Perfil.SUPERVISOR;
   });
 
-  filtered = computed<OrdemServico[]>(() => {
-    const p = this.perfil();
-    const userId = this.user()?.id;
-    let list = this.ordens();
+  filtered = computed<OrdemServico[]>(() => this.ordens());
 
-    if (p === Perfil.SOLICITANTE && userId) {
-      list = list.filter((o) => o.solicitante?.id === userId);
-    } else if (p === Perfil.TECNICO && userId) {
-      list = list.filter(
-        (o) => o.tecnico?.id === userId || (o.status === StatusOs.ABERTA && !o.tecnico)
-      );
-    }
+  setores = computed(() => {
+    const values = new Set(
+      this.ordens()
+        .map((ordem) => ordem.equipamento?.setor?.trim())
+        .filter((setor): setor is string => !!setor)
+    );
 
-    return list;
+    return Array.from(values).sort((a, b) => a.localeCompare(b));
   });
 
   ngOnInit(): void {
@@ -101,6 +97,10 @@ export class OsList implements OnInit {
     this.filtroTecnicoId.set('');
     this.filtroSetor.set('');
     this.load();
+  }
+
+  prioridadeLabel(prioridade: Prioridade): string {
+    return prioridade;
   }
 
   statusClass(status: StatusOs): string {
@@ -162,7 +162,7 @@ export class OsList implements OnInit {
       return 'ESTOURADO';
     }
 
-    return 'EM SLA';
+    return 'NO PRAZO';
   }
 
   private slaLimiteHoras(prioridade: Prioridade): number {
