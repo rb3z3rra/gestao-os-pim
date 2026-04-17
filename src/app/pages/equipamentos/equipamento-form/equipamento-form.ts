@@ -5,10 +5,11 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EquipamentoService } from '../../../core/services/equipamento.service';
 import { CreateEquipamentoDto, UpdateEquipamentoDto } from '../../../core/models/equipamento.model';
 import { ToastService } from '../../../shared/toast/toast.service';
+import { BackButton } from '../../../shared/back-button/back-button';
 
 @Component({
   selector: 'app-equipamento-form',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, BackButton],
   templateUrl: './equipamento-form.html',
 })
 export class EquipamentoForm implements OnInit {

@@ -6,10 +6,11 @@ import { UsuarioService } from '../../../core/services/usuario.service';
 import { Perfil } from '../../../core/models/perfil.enum';
 import { CreateUsuarioDto, UpdateUsuarioDto } from '../../../core/models/usuario.model';
 import { ToastService } from '../../../shared/toast/toast.service';
+import { BackButton } from '../../../shared/back-button/back-button';
 
 @Component({
   selector: 'app-usuario-form',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, BackButton],
   templateUrl: './usuario-form.html',
 })
 export class UsuarioForm implements OnInit {

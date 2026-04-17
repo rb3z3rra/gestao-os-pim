@@ -54,6 +54,7 @@ export interface ApontamentoOs {
   fimEm: string | null;
   observacao: string | null;
   criadoEm: string;
+  tecnico?: Usuario;
 }
 
 export interface CreateOrdemServicoDto {

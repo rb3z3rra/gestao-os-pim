@@ -27,19 +27,6 @@ export class Dashboard implements OnInit {
   user = this.auth.currentUser;
   perfilEnum = Perfil;
 
-  scoped = computed<OrdemServico[]>(() => {
-    const p = this.perfil();
-    const userId = this.user()?.id;
-    const list = this.ordens();
-    if (p === Perfil.SOLICITANTE && userId) return list.filter((o) => o.solicitante?.id === userId);
-    if (p === Perfil.TECNICO && userId) {
-      return list.filter(
-        (o) => o.tecnico?.id === userId || (o.status === StatusOs.ABERTA && !o.tecnico)
-      );
-    }
-    return list;
-  });
-
   abertas = computed(() => this.indicadores()?.abertas ?? 0);
   emAndamento = computed(() => this.indicadores()?.em_andamento ?? 0);
   aguardandoPeca = computed(() => this.indicadores()?.aguardando_peca ?? 0);
@@ -55,7 +42,7 @@ export class Dashboard implements OnInit {
   tempoMedioAteConclusaoHoras = computed(() => this.indicadores()?.tempo_medio_ate_conclusao_horas ?? 0);
   tempoMedioTrabalhoHoras = computed(() => this.indicadores()?.tempo_medio_trabalho_horas ?? 0);
 
-  recentes = computed(() => this.scoped().slice(0, 5));
+  recentes = computed(() => this.ordens().slice(0, 5));
   isSupervisor = computed(() => this.perfil() === Perfil.SUPERVISOR);
   isTecnico = computed(() => this.perfil() === Perfil.TECNICO);
   isSolicitante = computed(() => this.perfil() === Perfil.SOLICITANTE);
@@ -107,6 +94,53 @@ export class Dashboard implements OnInit {
         return 'text-yellow-400';
       case Prioridade.BAIXA:
         return 'text-slate-400';
+    }
+  }
+
+  slaBadge(o: OrdemServico): string {
+    const limiteHoras = this.slaLimiteHoras(o.prioridade);
+    const base = new Date(o.inicio_em ?? o.abertura_em).getTime();
+    const fim = new Date(o.conclusao_em ?? new Date()).getTime();
+    const horas = (fim - base) / (1000 * 60 * 60);
+
+    if (o.status === StatusOs.CONCLUIDA && horas <= limiteHoras) {
+      return 'bg-green-900/40 text-green-400';
+    }
+
+    if (horas > limiteHoras) {
+      return 'bg-red-900/40 text-red-400';
+    }
+
+    return 'bg-blue-900/40 text-blue-400';
+  }
+
+  slaLabel(o: OrdemServico): string {
+    const limiteHoras = this.slaLimiteHoras(o.prioridade);
+    const base = new Date(o.inicio_em ?? o.abertura_em).getTime();
+    const fim = new Date(o.conclusao_em ?? new Date()).getTime();
+    const horas = (fim - base) / (1000 * 60 * 60);
+
+    if (o.status === StatusOs.CONCLUIDA && horas <= limiteHoras) {
+      return 'NO PRAZO';
+    }
+
+    if (horas > limiteHoras) {
+      return 'ESTOURADO';
+    }
+
+    return 'NO PRAZO';
+  }
+
+  private slaLimiteHoras(prioridade: Prioridade): number {
+    switch (prioridade) {
+      case Prioridade.CRITICA:
+        return 4;
+      case Prioridade.ALTA:
+        return 8;
+      case Prioridade.MEDIA:
+        return 24;
+      case Prioridade.BAIXA:
+        return 72;
     }
   }
 }

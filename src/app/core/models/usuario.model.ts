@@ -11,6 +11,14 @@ export interface Usuario {
   created_at: string;
 }
 
+export interface UsuarioDetails extends Usuario {
+  total_os_solicitadas: number;
+  total_os_atribuidas: number;
+  total_os_concluidas: number;
+  total_apontamentos: number;
+  total_horas_trabalhadas: number;
+}
+
 export interface CreateUsuarioDto {
   nome: string;
   email: string;

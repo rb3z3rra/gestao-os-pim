@@ -15,9 +15,60 @@
   } @else if (error()) {
     <div class="bg-red-900/20 border border-red-900 text-red-300 p-4 rounded-lg">{{ error() }}</div>
   } @else {
+    <div class="mb-6 grid grid-cols-1 gap-3 rounded-2xl border border-slate-800 bg-slate-900/40 p-4 xl:grid-cols-[2fr_1fr_1fr_1fr_auto]">
+      <input
+        [ngModel]="busca()"
+        (ngModelChange)="busca.set($event)"
+        type="text"
+        placeholder="Buscar por nome, email ou matrícula"
+        class="rounded-xl border border-slate-700 bg-slate-950/40 px-4 py-2.5 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+      />
+
+      <select
+        [ngModel]="perfilFiltro()"
+        (ngModelChange)="perfilFiltro.set($event)"
+        class="rounded-xl border border-slate-700 bg-slate-950/40 px-4 py-2.5 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">Todos perfis</option>
+        @for (perfil of perfis; track perfil) {
+          <option [value]="perfil">{{ perfil }}</option>
+        }
+      </select>
+
+      <select
+        [ngModel]="setorFiltro()"
+        (ngModelChange)="setorFiltro.set($event)"
+        class="rounded-xl border border-slate-700 bg-slate-950/40 px-4 py-2.5 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">Todos setores</option>
+        @for (setor of setores(); track setor) {
+          <option [value]="setor">{{ setor }}</option>
+        }
+      </select>
+
+      <select
+        [ngModel]="statusFiltro()"
+        (ngModelChange)="statusFiltro.set($event)"
+        class="rounded-xl border border-slate-700 bg-slate-950/40 px-4 py-2.5 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="todos">Todos status</option>
+        <option value="ativos">Somente ativos</option>
+        <option value="inativos">Somente inativos</option>
+      </select>
+
+      <button
+        type="button"
+        (click)="clearFilters()"
+        class="rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-300 hover:bg-slate-800"
+      >
+        Limpar
+      </button>
+    </div>
+
     <div class="bg-slate-900/40 border border-slate-800 rounded-xl overflow-hidden">
+      <div class="panel-scroll max-h-[38rem] overflow-auto">
       <table class="w-full text-left">
-        <thead class="bg-slate-900/60">
+        <thead class="sticky top-0 bg-slate-900/95">
           <tr class="text-xs text-slate-400 uppercase tracking-widest">
             <th class="px-6 py-4">Nome</th>
             <th class="px-6 py-4">Email</th>
@@ -29,7 +80,7 @@
           </tr>
         </thead>
         <tbody class="text-sm text-slate-200">
-          @for (u of usuarios(); track u.id) {
+          @for (u of filtrados(); track u.id) {
             <tr class="border-t border-slate-800 hover:bg-slate-800/30">
               <td class="px-6 py-4 font-semibold">{{ u.nome }}</td>
               <td class="px-6 py-4 text-slate-400">{{ u.email }}</td>
@@ -46,7 +97,10 @@
                 }
               </td>
               <td class="px-6 py-4 text-right">
-                <a [routerLink]="['/usuarios', u.id]" class="text-slate-400 hover:text-blue-400 inline-block p-1">
+                <a [routerLink]="['/usuarios', u.id, 'detalhes']" class="text-slate-400 hover:text-blue-400 inline-block p-1">
+                  <span class="material-symbols-outlined text-base">visibility</span>
+                </a>
+                <a [routerLink]="['/usuarios', u.id]" class="text-slate-400 hover:text-blue-400 inline-block p-1 ml-2">
                   <span class="material-symbols-outlined text-base">edit</span>
                 </a>
                 <button (click)="onDelete(u)" class="text-slate-400 hover:text-red-400 inline-block p-1 ml-2">
@@ -61,6 +115,7 @@
           }
         </tbody>
       </table>
+      </div>
     </div>
   }
 </section>
