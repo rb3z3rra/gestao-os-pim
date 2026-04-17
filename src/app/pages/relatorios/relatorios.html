@@ -1,72 +1,302 @@
 <section class="p-8 pt-24">
-  <header class="mb-8">
-    <h1 class="text-3xl font-bold font-headline text-slate-100">Relatórios</h1>
-    <p class="text-sm text-slate-400 mt-1">Indicadores consolidados de Ordens de Serviço</p>
+  <header class="mb-8 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold font-headline text-slate-100">Relatórios</h1>
+      <p class="mt-1 text-sm text-slate-400">Visão gerencial da operação, da carga de trabalho e dos gargalos de manutenção.</p>
+    </div>
+    <div class="flex flex-col gap-3 xl:flex-row xl:flex-wrap xl:items-center xl:justify-end">
+      <label class="rounded-2xl border border-slate-800 bg-slate-900/50 px-4 py-3 text-sm text-slate-400">
+        <span class="mr-3 text-xs font-bold uppercase tracking-widest text-slate-500">Status</span>
+        <select
+          [ngModel]="statusFiltro()"
+          (ngModelChange)="statusFiltro.set($event)"
+          class="rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Todos status</option>
+          @for (status of statusOptions; track status) {
+            <option [value]="status">{{ status | statusLabel }}</option>
+          }
+        </select>
+      </label>
+      <label class="rounded-2xl border border-slate-800 bg-slate-900/50 px-4 py-3 text-sm text-slate-400">
+        <span class="mr-3 text-xs font-bold uppercase tracking-widest text-slate-500">SLA</span>
+        <select
+          [ngModel]="slaFiltro()"
+          (ngModelChange)="slaFiltro.set($event)"
+          class="rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Todos SLA</option>
+          <option value="NO_PRAZO">No prazo</option>
+          <option value="ESTOURADO">Estourado</option>
+        </select>
+      </label>
+      <label class="rounded-2xl border border-slate-800 bg-slate-900/50 px-4 py-3 text-sm text-slate-400">
+        <span class="mr-3 text-xs font-bold uppercase tracking-widest text-slate-500">Técnico</span>
+        <select
+          [ngModel]="tecnicoFiltro()"
+          (ngModelChange)="tecnicoFiltro.set($event)"
+          class="rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Todos técnicos</option>
+          @for (tecnico of tecnicosOptions(); track tecnico.id) {
+            <option [value]="tecnico.id">{{ tecnico.nome }}</option>
+          }
+        </select>
+      </label>
+      <label class="rounded-2xl border border-slate-800 bg-slate-900/50 px-4 py-3 text-sm text-slate-400">
+        <span class="mr-3 text-xs font-bold uppercase tracking-widest text-slate-500">Setor</span>
+        <select
+          [ngModel]="setorFiltro()"
+          (ngModelChange)="setorFiltro.set($event)"
+          class="rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Todos setores</option>
+          @for (setor of setoresOptions(); track setor) {
+            <option [value]="setor">{{ setor }}</option>
+          }
+        </select>
+      </label>
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/50 px-4 py-3 text-sm text-slate-400">
+        Base atual: <span class="font-semibold text-slate-100">{{ total() }}</span> O.S. consolidadas
+      </div>
+    </div>
   </header>
 
   @if (loading()) {
-    <div class="text-slate-400 py-12 text-center">Carregando...</div>
+    <div class="py-12 text-center text-slate-400">Carregando...</div>
   } @else if (error()) {
-    <div class="bg-red-900/20 border border-red-900 text-red-300 p-4 rounded-lg">{{ error() }}</div>
+    <div class="rounded-lg border border-red-900 bg-red-900/20 p-4 text-red-300">{{ error() }}</div>
   } @else {
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-      <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-6">
-        <p class="text-xs uppercase tracking-widest text-slate-400 font-bold mb-2">Total de O.S.</p>
-        <h3 class="text-4xl font-extrabold font-headline text-slate-100">{{ total() }}</h3>
-      </div>
-      <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-6">
-        <p class="text-xs uppercase tracking-widest text-slate-400 font-bold mb-2">Críticas</p>
-        <h3 class="text-4xl font-extrabold font-headline text-red-400">{{ criticas() }}</h3>
-      </div>
-      <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-6">
-        <p class="text-xs uppercase tracking-widest text-slate-400 font-bold mb-2">Concluídas</p>
-        <h3 class="text-4xl font-extrabold font-headline text-green-400">{{ concluidas() }}</h3>
-      </div>
-      <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-6">
-        <p class="text-xs uppercase tracking-widest text-slate-400 font-bold mb-2">Horas Trabalhadas</p>
-        <h3 class="text-4xl font-extrabold font-headline text-slate-100">{{ totalHoras() | number:'1.0-1' }}<span class="text-lg opacity-50 ml-1">h</span></h3>
-      </div>
+    <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <article class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Total de O.S.</p>
+        <p class="mt-3 text-4xl font-black text-slate-100">{{ total() }}</p>
+        <p class="mt-2 text-sm text-slate-500">Volume consolidado da operação.</p>
+      </article>
+
+      <article class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Concluídas</p>
+        <p class="mt-3 text-4xl font-black text-emerald-400">{{ concluidas() }}</p>
+        <p class="mt-2 text-sm text-slate-500">{{ percent(concluidas(), total()) }}% do total já encerrado.</p>
+      </article>
+
+      <article class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Críticas abertas</p>
+        <p class="mt-3 text-4xl font-black text-red-400">{{ criticas() }}</p>
+        <p class="mt-2 text-sm text-slate-500">O.S. com prioridade máxima ainda sem fechamento.</p>
+      </article>
+
+      <article class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Tempo médio até conclusão</p>
+        <p class="mt-3 text-4xl font-black text-blue-300">{{ tempoMedioConclusaoHoras() | number:'1.0-1' }}<span class="ml-1 text-lg text-slate-500">h</span></p>
+        <p class="mt-2 text-sm text-slate-500">Baseado em abertura até conclusão das O.S. encerradas.</p>
+      </article>
     </div>
 
-    <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-8">
-      <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400 mb-6">Distribuição por Status</h2>
-      <div class="space-y-4">
-        <div class="flex items-center gap-4">
-          <span class="w-40 text-xs text-slate-400 uppercase font-bold">Abertas</span>
-          <div class="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
-            <div class="h-full bg-blue-500" [style.width.%]="total() ? (abertas() / total()) * 100 : 0"></div>
-          </div>
-          <span class="text-sm text-slate-300 font-semibold w-10 text-right">{{ abertas() }}</span>
+    <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+      <section class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+        <div class="mb-6">
+          <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">O.S. por status</h2>
+          <p class="mt-2 text-sm text-slate-500">Leitura da fila por estágio operacional.</p>
         </div>
-        <div class="flex items-center gap-4">
-          <span class="w-40 text-xs text-slate-400 uppercase font-bold">Em Andamento</span>
-          <div class="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
-            <div class="h-full bg-yellow-500" [style.width.%]="total() ? (emAndamento() / total()) * 100 : 0"></div>
-          </div>
-          <span class="text-sm text-slate-300 font-semibold w-10 text-right">{{ emAndamento() }}</span>
+
+        <div class="history-scroll max-h-[24rem] overflow-y-auto rounded-2xl border border-slate-800/80 bg-slate-950/20 p-4 pr-2">
+        <div class="space-y-4">
+          @for (item of statusSeries(); track item.label) {
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-sm">
+                <span class="font-semibold" [class]="item.tone">{{ item.label }}</span>
+                <span class="text-slate-300">{{ item.value }} <span class="text-slate-500">({{ percent(item.value, total()) }}%)</span></span>
+              </div>
+              <div class="h-2.5 overflow-hidden rounded-full bg-slate-800">
+                <div class="h-full rounded-full" [class]="item.bar" [style.width.%]="percent(item.value, total())"></div>
+              </div>
+            </div>
+          }
         </div>
-        <div class="flex items-center gap-4">
-          <span class="w-40 text-xs text-slate-400 uppercase font-bold">Aguardando Peça</span>
-          <div class="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
-            <div class="h-full bg-orange-500" [style.width.%]="total() ? (aguardandoPeca() / total()) * 100 : 0"></div>
-          </div>
-          <span class="text-sm text-slate-300 font-semibold w-10 text-right">{{ aguardandoPeca() }}</span>
         </div>
-        <div class="flex items-center gap-4">
-          <span class="w-40 text-xs text-slate-400 uppercase font-bold">Concluídas</span>
-          <div class="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
-            <div class="h-full bg-green-500" [style.width.%]="total() ? (concluidas() / total()) * 100 : 0"></div>
-          </div>
-          <span class="text-sm text-slate-300 font-semibold w-10 text-right">{{ concluidas() }}</span>
+      </section>
+
+      <section class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+        <div class="mb-6">
+          <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">O.S. por prioridade</h2>
+          <p class="mt-2 text-sm text-slate-500">Distribuição da urgência acumulada na operação.</p>
         </div>
-        <div class="flex items-center gap-4">
-          <span class="w-40 text-xs text-slate-400 uppercase font-bold">Canceladas</span>
-          <div class="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
-            <div class="h-full bg-slate-500" [style.width.%]="total() ? (canceladas() / total()) * 100 : 0"></div>
-          </div>
-          <span class="text-sm text-slate-300 font-semibold w-10 text-right">{{ canceladas() }}</span>
+
+        <div class="history-scroll max-h-[24rem] overflow-y-auto rounded-2xl border border-slate-800/80 bg-slate-950/20 p-4 pr-2">
+        <div class="space-y-4">
+          @for (item of prioridadeSeries(); track item.label) {
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-sm">
+                <span class="font-semibold" [class]="item.tone">{{ item.label }}</span>
+                <span class="text-slate-300">{{ item.value }} <span class="text-slate-500">({{ percent(item.value, total()) }}%)</span></span>
+              </div>
+              <div class="h-2.5 overflow-hidden rounded-full bg-slate-800">
+                <div class="h-full rounded-full" [class]="item.bar" [style.width.%]="percent(item.value, total())"></div>
+              </div>
+            </div>
+          }
         </div>
-      </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
+      <section class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+        <div class="mb-6 flex items-center justify-between gap-3">
+          <div>
+            <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">Horas por técnico</h2>
+            <p class="mt-2 text-sm text-slate-500">Tempo efetivo consolidado a partir dos apontamentos encerrados.</p>
+          </div>
+          <div class="text-right">
+            <p class="text-xs uppercase tracking-widest text-slate-500">Total apontado</p>
+            <p class="text-xl font-bold text-slate-100">{{ totalHoras() | number:'1.0-1' }}h</p>
+          </div>
+        </div>
+
+        <div class="history-scroll max-h-[28rem] overflow-y-auto rounded-2xl border border-slate-800/80 bg-slate-950/20 p-4 pr-2">
+        <div class="space-y-4">
+          @for (item of horasPorTecnico(); track item.id) {
+            <div class="rounded-xl border border-slate-800 bg-slate-950/30 p-4">
+              <div class="mb-3 flex items-center justify-between gap-3">
+                <div>
+                  <p class="text-sm font-semibold text-slate-100">{{ item.nome }}</p>
+                  <p class="text-xs uppercase tracking-widest text-slate-500">{{ item.ordens }} O.S. | {{ item.concluidas }} concluídas</p>
+                </div>
+                <p class="text-lg font-bold text-blue-300">{{ item.horas | number:'1.0-2' }}h</p>
+              </div>
+              <div class="h-2 overflow-hidden rounded-full bg-slate-800">
+                <div
+                  class="h-full rounded-full bg-blue-500"
+                  [style.width.%]="widthByMax(item.horas, horasPorTecnico().map((tecnico) => tecnico.horas))"
+                ></div>
+              </div>
+            </div>
+          } @empty {
+            <p class="text-sm text-slate-500">Nenhum apontamento concluído disponível para consolidar por técnico.</p>
+          }
+        </div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+        <div class="mb-6">
+          <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">O.S. por setor</h2>
+          <p class="mt-2 text-sm text-slate-500">Ajuda a identificar quais áreas mais pressionam a manutenção.</p>
+        </div>
+
+        <div class="history-scroll max-h-[28rem] overflow-y-auto rounded-2xl border border-slate-800/80 bg-slate-950/20 p-4 pr-2">
+        <div class="space-y-4">
+          @for (item of ordensPorSetor(); track item.setor) {
+            <div class="rounded-xl border border-slate-800 bg-slate-950/30 p-4">
+              <div class="mb-3 flex items-center justify-between gap-3">
+                <div>
+                  <p class="text-sm font-semibold text-slate-100">{{ item.setor }}</p>
+                  <p class="text-xs uppercase tracking-widest text-slate-500">{{ item.abertas }} abertas | {{ item.concluidas }} concluídas</p>
+                </div>
+                <p class="text-lg font-bold text-violet-300">{{ item.total }}</p>
+              </div>
+              <div class="h-2 overflow-hidden rounded-full bg-slate-800">
+                <div
+                  class="h-full rounded-full bg-violet-500"
+                  [style.width.%]="widthByMax(item.total, ordensPorSetor().map((setor) => setor.total))"
+                ></div>
+              </div>
+            </div>
+          } @empty {
+            <p class="text-sm text-slate-500">Nenhum setor consolidado no período atual.</p>
+          }
+        </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-[1.2fr_1.8fr]">
+      <section class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+        <div class="mb-6">
+          <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">Desempenho por técnico</h2>
+          <p class="mt-2 text-sm text-slate-500">Leitura rápida de carga, fechamento e horas registradas por pessoa.</p>
+        </div>
+
+        <div class="history-scroll max-h-[30rem] overflow-y-auto rounded-2xl border border-slate-800/80 bg-slate-950/20 p-4 pr-2">
+        <div class="space-y-3">
+          @for (item of horasPorTecnico(); track item.id) {
+            <div class="grid grid-cols-[1.5fr_repeat(3,auto)] items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/30 px-4 py-3 text-sm">
+              <div class="min-w-0">
+                <p class="truncate font-semibold text-slate-100">{{ item.nome }}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-[10px] uppercase tracking-widest text-slate-500">O.S.</p>
+                <p class="font-semibold text-slate-200">{{ item.ordens }}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-[10px] uppercase tracking-widest text-slate-500">Concl.</p>
+                <p class="font-semibold text-emerald-300">{{ item.concluidas }}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-[10px] uppercase tracking-widest text-slate-500">Horas</p>
+                <p class="font-semibold text-blue-300">{{ item.horas | number:'1.0-2' }}h</p>
+              </div>
+            </div>
+          } @empty {
+            <p class="text-sm text-slate-500">Sem técnicos com apontamentos ou atribuições registradas.</p>
+          }
+        </div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+        <div class="mb-6 flex items-center justify-between gap-3">
+          <div>
+            <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">O.S. recentes</h2>
+            <p class="mt-2 text-sm text-slate-500">Base analítica para consulta rápida das ordens mais novas.</p>
+          </div>
+          <a routerLink="/ordens-de-servico" class="text-sm font-semibold text-blue-400 hover:text-blue-300">Abrir lista completa</a>
+        </div>
+
+        <div class="overflow-hidden rounded-xl border border-slate-800">
+          <div class="history-scroll max-h-[30rem] overflow-y-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="sticky top-0 bg-slate-950/95 text-[11px] uppercase tracking-widest text-slate-500">
+                <tr>
+                  <th class="px-4 py-3">O.S.</th>
+                  <th class="px-4 py-3">Setor</th>
+                  <th class="px-4 py-3">Técnico</th>
+                  <th class="px-4 py-3">Prioridade</th>
+                  <th class="px-4 py-3">Status</th>
+                  <th class="px-4 py-3 text-right">Tempo</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800 text-slate-200">
+                @for (ordem of ordensRecentes(); track ordem.id) {
+                  <tr class="bg-slate-950/20 transition-colors hover:bg-slate-800/30">
+                    <td class="px-4 py-3">
+                      <a [routerLink]="['/ordens-de-servico', ordem.id]" class="font-mono font-semibold text-blue-400 hover:text-blue-300">
+                        {{ ordem.numero }}
+                      </a>
+                    </td>
+                    <td class="px-4 py-3 text-slate-400">{{ ordem.equipamento.setor || '—' }}</td>
+                    <td class="px-4 py-3 text-slate-400">{{ ordem.tecnico?.nome || 'Sem técnico' }}</td>
+                    <td class="px-4 py-3">
+                      <span class="font-semibold" [class]="prioridadeClass(ordem.prioridade)">{{ ordem.prioridade }}</span>
+                    </td>
+                    <td class="px-4 py-3">
+                      <span class="rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-wider" [class]="statusClass(ordem.status)">
+                        {{ ordem.status | statusLabel }}
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 text-right text-slate-300">{{ ordem.total_trabalhado_formatado || ordem.duracao_execucao_formatada || '—' }}</td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="6" class="px-4 py-10 text-center text-slate-500">Nenhuma O.S. disponível para análise.</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
     </div>
   }
 </section>

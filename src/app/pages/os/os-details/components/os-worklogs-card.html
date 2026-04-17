@@ -1,22 +1,43 @@
 <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-6">
   <h2 class="text-sm uppercase tracking-widest text-slate-400 font-bold mb-4">Apontamentos de Trabalho</h2>
-  <div class="space-y-4">
-    @for (apontamento of apontamentos(); track apontamento.id) {
-      <div class="rounded-lg border border-slate-800 bg-slate-950/30 p-4">
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-2">
-          <p class="text-sm font-semibold text-slate-100">
-            {{ apontamento.inicioEm | date:'dd/MM/yyyy HH:mm' }}
-            <span class="text-slate-500">→</span>
-            {{ apontamento.fimEm ? (apontamento.fimEm | date:'dd/MM/yyyy HH:mm') : 'Em aberto' }}
-          </p>
-          <span class="text-xs uppercase tracking-widest text-slate-500">
-            {{ apontamento.fimEm ? 'Finalizado' : 'Em andamento' }}
-          </span>
+  <div class="history-scroll max-h-[34rem] overflow-y-auto rounded-2xl border border-slate-800/80 bg-slate-950/20 p-4 pr-2">
+    <div class="space-y-5">
+    @for (grupo of grupos(); track grupo.tecnicoId) {
+      <section class="rounded-xl border border-slate-800 bg-slate-950/30 p-4">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+          <div>
+            <p class="text-sm font-semibold text-slate-100">{{ grupo.tecnicoNome }}</p>
+            <p class="text-xs uppercase tracking-widest text-slate-500">
+              {{ grupo.apontamentos.length }} apontamento(s)
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-xs uppercase tracking-widest text-slate-500">Subtotal trabalhado</p>
+            <p class="text-sm font-semibold text-blue-300">{{ grupo.totalFormatado }}</p>
+          </div>
         </div>
-        <p class="text-xs text-slate-500 whitespace-pre-line">{{ apontamento.observacao || 'Sem observação' }}</p>
-      </div>
+
+        <div class="space-y-3">
+          @for (apontamento of grupo.apontamentos; track apontamento.id) {
+            <div class="rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+              <div class="mb-2 flex flex-wrap items-center justify-between gap-3">
+                <p class="text-sm font-semibold text-slate-100">
+                  {{ apontamento.inicioEm | date:'dd/MM/yyyy HH:mm' }}
+                  <span class="text-slate-500">→</span>
+                  {{ apontamento.fimEm ? (apontamento.fimEm | date:'dd/MM/yyyy HH:mm') : 'Em aberto' }}
+                </p>
+                <span class="text-xs uppercase tracking-widest text-slate-500">
+                  {{ apontamento.fimEm ? 'Finalizado' : 'Em andamento' }}
+                </span>
+              </div>
+              <p class="text-xs text-slate-500 whitespace-pre-line">{{ apontamento.observacao || 'Sem observação' }}</p>
+            </div>
+          }
+        </div>
+      </section>
     } @empty {
       <p class="text-slate-500 text-sm">Nenhum apontamento registrado.</p>
     }
+    </div>
   </div>
 </div>

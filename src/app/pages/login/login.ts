@@ -33,11 +33,27 @@ export class Login {
       await firstValueFrom(this.authService.login(this.email, this.password));
       await this.router.navigate(['/dashboard']);
     } catch (err: any) {
-      this.errorMessage = err?.error?.message || 'E-mail ou senha inválidos.';
+      this.errorMessage = this.resolveErrorMessage(err);
       this.cdr.detectChanges();
     } finally {
       this.loading = false;
       this.cdr.detectChanges();
     }
+  }
+
+  private resolveErrorMessage(err: any): string {
+    if (err?.status === 0) {
+      return 'Não foi possível conectar ao servidor.';
+    }
+
+    if (err?.status === 429) {
+      return 'Muitas tentativas de login. Aguarde um pouco e tente novamente.';
+    }
+
+    if (typeof err?.error === 'string' && err.error.trim()) {
+      return err.error;
+    }
+
+    return err?.error?.message || 'E-mail ou senha inválidos.';
   }
 }

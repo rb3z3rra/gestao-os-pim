@@ -1,8 +1,6 @@
 <section class="p-8 pt-24 max-w-6xl">
   <header class="flex items-center gap-4 mb-8">
-    <a [routerLink]="['/ordens-de-servico']" class="text-slate-400 hover:text-slate-200">
-      <span class="material-symbols-outlined">arrow_back</span>
-    </a>
+    <app-back-button fallback="/ordens-de-servico" />
     @if (os(); as o) {
       <div class="flex-1">
         <div class="flex items-center gap-3">
@@ -24,40 +22,45 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-2 space-y-6">
         <app-os-summary-card [ordem]="o" />
-        <app-os-worklogs-card [apontamentos]="apontamentos()" />
-        <app-os-history-card [historico]="historico()" />
+        @if (!isSolicitante()) {
+          <app-os-worklogs-card [apontamentos]="apontamentos()" />
+          <app-os-history-card [historico]="historico()" />
+        }
       </div>
 
-      <app-os-workflow-actions
-        [canAssumir]="canAssumir()"
-        [canAtribuirTecnico]="canAtribuirTecnico()"
-        [canIniciar]="canIniciar()"
-        [canAtualizarStatus]="canAtualizarStatus()"
-        [canIniciarTrabalho]="canIniciarTrabalho()"
-        [canFinalizarTrabalho]="canFinalizarTrabalho()"
-        [canConcluir]="canConcluir()"
-        [action]="action()"
-        [tecnicos]="tecnicos()"
-        [tecnicoSelecionado]="tecnicoSelecionado()"
-        [novoStatus]="novoStatus()"
-        [availableStatusOptions]="availableStatusOptions()"
-        [observacaoStatus]="observacaoStatus()"
-        [observacaoApontamento]="observacaoApontamento()"
-        [descricaoServico]="conclusao.descricao_servico"
-        [pecasUtilizadas]="conclusao.pecas_utilizadas"
-        (tecnicoSelecionadoChange)="tecnicoSelecionado.set($event)"
-        (novoStatusChange)="novoStatus.set($event)"
-        (observacaoStatusChange)="observacaoStatus.set($event)"
-        (observacaoApontamentoChange)="observacaoApontamento.set($event)"
-        (descricaoServicoChange)="conclusao.descricao_servico = $event"
-        (pecasUtilizadasChange)="conclusao.pecas_utilizadas = $event"
-        (assumirClicked)="assumir()"
-        (atribuirClicked)="atribuirTecnico()"
-        (iniciarClicked)="iniciar()"
-        (atualizarStatusClicked)="atualizarStatus()"
-        (iniciarTrabalhoClicked)="iniciarTrabalho()"
-        (finalizarTrabalhoClicked)="finalizarTrabalho()"
-        (concluirClicked)="concluir()" />
+      @if (!isSolicitante()) {
+        <app-os-workflow-actions
+          [canAssumir]="canAssumir()"
+          [canAtribuirTecnico]="canAtribuirTecnico()"
+          [atribuirBloqueado]="atribuirBloqueado()"
+          [canIniciar]="canIniciar()"
+          [canAtualizarStatus]="canAtualizarStatus()"
+          [canIniciarTrabalho]="canIniciarTrabalho()"
+          [canFinalizarTrabalho]="canFinalizarTrabalho()"
+          [canConcluir]="canConcluir()"
+          [action]="action()"
+          [tecnicos]="tecnicos()"
+          [tecnicoSelecionado]="tecnicoSelecionado()"
+          [novoStatus]="novoStatus()"
+          [availableStatusOptions]="availableStatusOptions()"
+          [observacaoStatus]="observacaoStatus()"
+          [observacaoApontamento]="observacaoApontamento()"
+          [descricaoServico]="conclusao.descricao_servico"
+          [pecasUtilizadas]="conclusao.pecas_utilizadas"
+          (tecnicoSelecionadoChange)="tecnicoSelecionado.set($event)"
+          (novoStatusChange)="novoStatus.set($event)"
+          (observacaoStatusChange)="observacaoStatus.set($event)"
+          (observacaoApontamentoChange)="observacaoApontamento.set($event)"
+          (descricaoServicoChange)="conclusao.descricao_servico = $event"
+          (pecasUtilizadasChange)="conclusao.pecas_utilizadas = $event"
+          (assumirClicked)="assumir()"
+          (atribuirClicked)="atribuirTecnico()"
+          (iniciarClicked)="iniciar()"
+          (atualizarStatusClicked)="atualizarStatus()"
+          (iniciarTrabalhoClicked)="iniciarTrabalho()"
+          (finalizarTrabalhoClicked)="finalizarTrabalho()"
+          (concluirClicked)="concluir()" />
+      }
     </div>
   }
 </section>

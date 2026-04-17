@@ -11,6 +11,7 @@ export interface Equipamento {
   ativo: boolean;
   data_cadastro: string;
   ultima_revisao: string | null;
+  os_abertas_count?: number;
   ordensServico?: {
     id: string;
     numero: string;
@@ -22,6 +23,13 @@ export interface Equipamento {
     solicitante: { id: string; nome: string };
     tecnico: { id: string; nome: string } | null;
   }[];
+}
+
+export interface EquipamentoListFilters {
+  busca?: string;
+  setor?: string;
+  ativo?: boolean;
+  comOsAbertas?: boolean;
 }
 
 export interface CreateEquipamentoDto {
