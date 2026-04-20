@@ -2,7 +2,7 @@ import { defineConfig } from 'cypress';
 
 export default defineConfig({
   e2e: {
-    baseUrl: 'https://manuos.izitecnologia.com.br',
+    baseUrl: 'http://localhost:4200',
     viewportWidth: 1280,
     viewportHeight: 720,
     defaultCommandTimeout: 10000,
@@ -14,7 +14,7 @@ export default defineConfig({
     supportFile: 'cypress/support/e2e.ts',
   },
   env: {
-    supervisor_email: 'admin@pim.com',
-    supervisor_senha: 'Admin@123',
+    supervisor_email: 'supervisor@seed.local',
+    supervisor_senha: 'seed123',
   },
 });

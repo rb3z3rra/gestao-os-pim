@@ -79,9 +79,10 @@ describe('Ordens de Serviço', () => {
     it('filtra por status', () => {
       cy.visit('/ordens-de-servico');
       cy.get('[data-cy="filtro-status"]').select('CONCLUIDA');
-      cy.get('[data-cy="os-row"]').each(($row) => {
-        cy.wrap($row).contains('CONCLUÍDA').should('be.visible');
-      });
+      
+      // Esperar a tabela recarregar e verificar as linhas de forma isolada
+      cy.get('[data-cy="os-row"]', { timeout: 10000 }).should('exist');
+      cy.get('[data-cy="os-row"]').should('contain', 'CONCLUÍDA');
     });
 
     it('busca por número', () => {

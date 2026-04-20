@@ -1,25 +1,25 @@
 {
   "equipamento": {
-    "codigo": "EQ-TESTE-001",
-    "nome": "Equipamento de Teste Cypress",
-    "tipo": "Compressor",
-    "localizacao": "Sala de Testes",
-    "setor": "Operação"
+    "codigo": "SEED-EQP-001",
+    "nome": "Prensa Hidraulica 01",
+    "tipo": "Prensa",
+    "localizacao": "Linha A",
+    "setor": "Producao"
   },
   "usuario_tecnico": {
-    "nome": "Técnico Cypress",
-    "email": "tecnico.cypress@pim.com",
-    "matricula": "TEC-CY-001",
-    "senha": "Cypress@123",
-    "perfil": "TÉCNICO",
+    "nome": "Tecnico Demo Norte",
+    "email": "tecnico.norte@seed.local",
+    "matricula": "SEED-TEC-001",
+    "senha": "seed123",
+    "perfil": "TECNICO",
     "setor": "Manutenção"
   },
   "usuario_solicitante": {
-    "nome": "Solicitante Cypress",
-    "email": "solicitante.cypress@pim.com",
-    "matricula": "SOL-CY-001",
-    "senha": "Cypress@123",
+    "nome": "Solicitante Demo Linha 1",
+    "email": "solicitante.linha1@seed.local",
+    "matricula": "SEED-SOL-001",
+    "senha": "seed123",
     "perfil": "SOLICITANTE",
-    "setor": "Operação"
+    "setor": "Produção"
   }
 }
