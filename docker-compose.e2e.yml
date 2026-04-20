@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: servicopim_e2e
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d servicopim_e2e"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: ../servicoPim-API
+      dockerfile: dockerfile
+    environment:
+      PORT: 9090
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASS: postgres
+      DB_NAME: servicopim_e2e
+      NODE_ENV: production
+      JWT_ACCESS_SECRET: e2e_access_secret_test
+      JWT_REFRESH_SECRET: e2e_refresh_secret_test
+      DB_LOGGING: "false"
+      DISABLE_RATE_LIMIT: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9090/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  frontend:
+    build:
+      context: .
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
