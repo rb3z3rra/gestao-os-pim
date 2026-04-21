@@ -2,9 +2,9 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
-import { Usuario } from '../models/usuario.model';
+import { Usuario } from '@features/usuarios/models/usuario.model';
 import { Perfil } from '../models/perfil.enum';
-import { environment } from '../../../environments/environment';
+import { environment } from '@env/environment';
 
 interface AuthState {
   usuario: Usuario | null;
