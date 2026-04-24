@@ -7,6 +7,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  SHORT_SHA: ${{ github.sha }}
 
 jobs:
   e2e:
@@ -114,12 +115,14 @@ jobs:
     needs: e2e
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -134,7 +137,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=1.0.0
+            type=sha,prefix=,format=short
             type=raw,value=latest
 
       - name: Build and push
@@ -144,6 +147,16 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Atualiza tag do frontend no docker-compose.yml
+        run: |
+          SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          sed -i "s|image: ghcr.io/rpd-infotech/gestao-os-pim:.*|image: ghcr.io/rpd-infotech/gestao-os-pim:${SHA}|" docker-compose.yml
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add docker-compose.yml
+          git diff --staged --quiet || git commit -m "ci: atualiza imagem frontend para ${SHA}"
+          git push
 
       - name: Redeploy stack no Portainer
         run: curl -X POST "${{ secrets.PORTAINER_WEBHOOK_URL }}"
