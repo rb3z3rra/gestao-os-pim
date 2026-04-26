@@ -78,12 +78,9 @@ jobs:
         working-directory: gestao-os-pim
         run: bash cypress/seeds/seed-e2e.sh
 
-      - name: Override baseUrl in cypress.config.ts
+      - name: Show Cypress baseUrl
         working-directory: gestao-os-pim
-        run: |
-          sed -i "s|baseUrl: .*|baseUrl: process.env.CYPRESS_BASE_URL || 'http://localhost:3000',|" cypress.config.ts
-          echo "--- cypress.config.ts ---"
-          cat cypress.config.ts
+        run: echo "CYPRESS_BASE_URL=http://localhost:3000"
 
       - name: Install frontend dependencies
         working-directory: gestao-os-pim
