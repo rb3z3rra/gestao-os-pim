@@ -24,7 +24,7 @@ jobs:
       - name: Checkout API
         uses: actions/checkout@v4
         with:
-          repository: patrese-ebs/servicoPim-API-Patrese
+          repository: rb3z3rra/servicoPim-API
           path: servicoPim-API
 
       # Setup Node
