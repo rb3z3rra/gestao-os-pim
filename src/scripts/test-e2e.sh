@@ -27,7 +27,7 @@ source .env.e2e
 set +a
 
 echo "Subindo ambiente E2E..."
-docker compose -f docker-compose.e2e.yml up -d --wait
+docker compose -f docker-compose.e2e.yml up -d --build --wait
 
 echo "Carregando seed base da API..."
 docker compose -f docker-compose.e2e.yml exec -T api node dist/src/scripts/seed.js

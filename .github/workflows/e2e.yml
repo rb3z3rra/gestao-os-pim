@@ -40,6 +40,11 @@ jobs:
         working-directory: gestao-os-pim
         run: npm ci
 
+      # Executa testes unitários do front antes do E2E
+      - name: Run frontend unit tests
+        working-directory: gestao-os-pim
+        run: npm test -- --watch=false
+
       # Cria o .env.e2e (CORREÇÃO PRINCIPAL)
       - name: Create .env.e2e
         working-directory: gestao-os-pim
