@@ -29,6 +29,9 @@ set +a
 echo "Subindo ambiente E2E..."
 docker compose -f docker-compose.e2e.yml up -d --wait
 
+echo "Carregando seed base da API..."
+docker compose -f docker-compose.e2e.yml exec -T api node dist/src/scripts/seed.js
+
 echo "Carregando seed E2E..."
 bash cypress/seeds/seed-e2e.sh
 

@@ -44,8 +44,7 @@ jobs:
       - name: Create .env.e2e
         working-directory: gestao-os-pim
         run: |
-          echo "CYPRESS_baseUrl=http://localhost:3000" >> .env.e2e
-          echo "CYPRESS_API_URL=http://localhost:9090" >> .env.e2e
+          echo "CYPRESS_BASE_URL=http://localhost:3000" >> .env.e2e
           echo "CYPRESS_supervisor_email=supervisor@seed.local" >> .env.e2e
           echo "CYPRESS_supervisor_senha=seed123" >> .env.e2e
 
