@@ -11,35 +11,18 @@ Cypress.Commands.add('login', (email?: string, senha?: string) => {
   const userEmail = email ?? Cypress.env('supervisor_email');
   const userSenha = senha ?? Cypress.env('supervisor_senha');
 
-  cy.session(
-    ['auth', userEmail],
-    () => {
-      cy.clearCookies();
-      cy.clearLocalStorage();
-      cy.request({
-        method: 'POST',
-        url: '/api/auth/login',
-        body: {
-          email: userEmail,
-          senha: userSenha,
-        },
-      })
-        .its('status')
-        .should('eq', 200);
+  cy.clearCookies();
+  cy.clearLocalStorage();
+  cy.request({
+    method: 'POST',
+    url: '/api/auth/login',
+    body: {
+      email: userEmail,
+      senha: userSenha,
     },
-    {
-      cacheAcrossSpecs: true,
-      validate: () => {
-        cy.request({
-          method: 'POST',
-          url: '/api/auth/refresh',
-          failOnStatusCode: false,
-        })
-          .its('status')
-          .should('eq', 200);
-      },
-    },
-  );
+  })
+    .its('status')
+    .should('eq', 200);
 });
 
 Cypress.Commands.add('loginAsSupervisor', () => {
